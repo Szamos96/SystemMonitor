@@ -1,0 +1,127 @@
+package org.sed.medicalportal.model.doctor;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.URL;
+import org.sed.medicalportal.listeners.DoctorListener;
+import org.sed.medicalportal.model.deprecated.ICloneableEntity;
+import org.sed.medicalportal.model.practice.Practice;
+import org.sed.medicalportal.model.specialization.Specialization;
+import org.sed.medicalportal.model.title.Title;
+import org.sed.medicalportal.serializer.StringDeserializer;
+import org.sed.medicalportal.serializer.StringSetDeserializer;
+import org.sed.medicalportal.validation.phone.Phone;
+import org.sed.medicalportal.validation.uniquevalue.Unique;
+import org.sed.medicalportal.validation.uniquevalue.UniqueCheck;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Entity
+// @EntityListeners(DoctorListener.class)
+@EqualsAndHashCode
+@Getter
+@Setter
+@Unique(fieldName = "sealNumber", groups = UniqueCheck.class)
+public abstract class Doctor implements ICloneableEntity<Doctor> {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id;
+
+	@Column(nullable = true)
+	@Min(value = 1)
+	private Long sealNumber;
+
+	@NotBlank
+	@JsonSetter(nulls = Nulls.FAIL)
+	@JsonDeserialize(using = StringDeserializer.class)
+	@Length(min = 1, max = 255)
+	private String name;
+
+	@ElementCollection
+	@JsonDeserialize(using = StringSetDeserializer.class)
+	@JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+	@EqualsAndHashCode.Exclude
+	private Set<@Phone String> phones = new HashSet<>();
+
+	@ElementCollection
+	@EqualsAndHashCode.Exclude
+	@JsonDeserialize(using = StringSetDeserializer.class)
+	@JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+	private Set<@Email String> mails = new HashSet<>();
+	
+	@ElementCollection
+	@EqualsAndHashCode.Exclude
+	@JsonDeserialize(using = StringSetDeserializer.class)
+	@JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+	private Set<@Length(min = 1, max = 255)String> specialties = new HashSet<>();
+
+	@JsonSetter(nulls = Nulls.SKIP)
+	@JsonDeserialize(using = StringDeserializer.class)
+	@EqualsAndHashCode.Exclude
+	@Column(length = 10000)
+	@Length(min = 0, max = 10000)
+	private String description = "";
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
+	@JsonIdentityReference(alwaysAsId = true)
+	@JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
+	@JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+	@EqualsAndHashCode.Exclude
+	private Set<Title> titles = new HashSet<>();
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
+	@JsonIdentityReference(alwaysAsId = true)
+	@JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
+	@JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+	@EqualsAndHashCode.Exclude
+	private Set<Specialization> specializations = new HashSet<>();
+
+	@ElementCollection
+	@JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+	@JsonDeserialize(using = StringSetDeserializer.class)
+	@EqualsAndHashCode.Exclude
+	private Set<@URL @Length(min = 1, max = 255) String> privateWebPages = new HashSet<>();
+
+	@JsonSetter(nulls = Nulls.SKIP)
+	@JsonDeserialize(using = StringDeserializer.class)
+	@URL
+	private String image = "";
+
+	@Override
+	public String toString() {
+		return "Doctor [id=" + id + ", name=" + name + ", titles=" + titles + ", specializations=" + specializations
+				+ ", HCW ID: " + "]";
+	}
+	public abstract Set<? extends Practice> getPractices();
+
+}

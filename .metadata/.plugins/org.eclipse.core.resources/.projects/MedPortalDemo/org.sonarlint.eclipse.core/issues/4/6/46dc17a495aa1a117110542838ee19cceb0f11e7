@@ -1,0 +1,22 @@
+
+w
+java:S1128"KRemove this unused import 'org.sed.medicalportal.model.user.MedportalUser'.(‡’üñH‚RMINORZ
+CODE_SMELL
+Y
+java:S1128".Remove this unused import 'java.util.HashSet'.(Ê‚êXHƒRMINORZ
+CODE_SMELL
+‡
+java:S1450"VRemove the "context" field and declare it as a local variable in the relevant methods.(«šÇÕûÿÿÿÿH„RMINORZ
+CODE_SMELL
+‚
+java:S1128"QRemove this unused import 'org.sed.medicalportal.repository.user.UserRepository'.(å¾ÍãøÿÿÿÿH…RMINORZ
+CODE_SMELL
+s
+java:S1128"GRemove this unused import 'org.springframework.boot.CommandLineRunner'.(È—ÿÅH†RMINORZ
+CODE_SMELL
+r
+java:S1128"FRemove this unused import 'org.sed.medicalportal.model.user.UserRole'.(€´°ØH‡RMINORZ
+CODE_SMELL
+t
+java:S1128"HRemove this unused import 'org.springframework.context.annotation.Bean'.(‚î‰ÞHˆRMINORZ
+CODE_SMELL
