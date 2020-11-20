@@ -20,6 +20,9 @@ public class ClientController {
 	int port = 8080;
 	int freq = 60;
 	
+	private boolean sending = false;
+	private Timer timer = new Timer();
+	
 	ClientView clientView;
 
 	private static ClientController clientController = null;
@@ -58,29 +61,40 @@ public class ClientController {
 		
 	}
 	
-	public void start() {
-		TimerTask task = new TimerTask()
-		{
-		    int minutes = freq;
-		    int i = 0;
-		    @Override
-		    public void run()
-		    {
-		       i++;
+	public boolean start() {
+		
+		if(!sending) {
+			TimerTask task = new TimerTask()
+			{
+			    int minutes = freq;
+			    int i = 0;
+			    @Override
+			    public void run()
+			    {
+			       i++;
 
-		       if(i % minutes == 0)
-				try {
-					send();
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
-			else
-		    	   clientView.remainField.setText((minutes - (i %minutes))+"");
-		    }
-		};
+			       if(i % minutes == 0)
+					try {
+						send();
+					} catch (URISyntaxException e) {
+						e.printStackTrace();
+					}
+				else
+			    	   clientView.remainField.setText((minutes - (i %minutes))+"");
+			    }
+			};
 
-		Timer timer = new Timer();
-		timer.schedule(task, 0, 60000);
+			
+			timer.schedule(task, 0, 60000);
+			sending = true;
+			return true;
+		}else {
+			timer.cancel();
+			sending = false;
+			return false;
+		}
+		
+		
 	}
 
 	public boolean test() throws URISyntaxException {

@@ -21,6 +21,7 @@ import org.jdatepicker.impl.UtilDateModel;
 import org.sed.systemmonitor.model.SystemInformation;
 import org.sed.systemmonitor.util.JTreeMapper;
 import org.sed.systemmonitor.util.SystemInformationFactory;
+import org.springframework.instrument.classloading.jboss.JBossLoadTimeWeaver;
 
 import oshi.SystemInfo;
 
@@ -41,6 +42,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 public class ClientView extends JFrame {
 
@@ -295,9 +297,20 @@ public class ClientView extends JFrame {
 		panel_4.add(btnNewButton_1, gbc_btnNewButton_1);
 		
 		JButton btnNewButton_1_1 = new JButton("Start");
+		btnNewButton_1_1.setForeground(Color.BLACK);
 		btnNewButton_1_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				clientController.start();
+				
+				if(clientController.start()) {
+					btnNewButton_1_1.setText("STOP");
+					btnNewButton_1_1.setForeground(Color.RED);
+				}else {
+					btnNewButton_1_1.setText("Start");
+					btnNewButton_1_1.setForeground(Color.BLACK);
+					remainField.setText("0");
+				}
+				
+				
 			}
 		});
 		GridBagConstraints gbc_btnNewButton_1_1 = new GridBagConstraints();
